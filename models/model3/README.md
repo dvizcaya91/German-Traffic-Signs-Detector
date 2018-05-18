@@ -31,6 +31,40 @@ class ConvLayer(object):
 		__init__: Initialize the layer
 		forward: Perform a forward step of the layer
 	'''
+	def __init__(self, cnn_filter, pooling, activation):
+		'''
+		Initialize the weights and bias of the layer
+		@cnn_filter: List of 4 elements. The first two elements are the neighborhood connection size. The last two elements are the size of the feature map (input and output)
+		@pooling: List of 4 elements. This are the neighborhood connection size for the sub-sampling layer.
+		@activation: Activation function for the layer
+		'''
+
+		#Define tensorflow variables (weight and bias)
+		self.W = tf.Variable((np.random.randn(*cnn_filter) * np.sqrt(2.0 / np.prod(cnn_filter[:-1]))).astype(np.float32))
+		self.b = tf.Variable(np.zeros(cnn_filter[3]).astype(np.float32))
+
+		#Define the pooling and activation as properties of the element
+		self.pooling = pooling
+		self.f = activation
+
+	def forward(self, X):
+		'''
+		Perform a forward step of the layer
+		@X: Numpy a array the is the input of the layer
+
+		returns the output of the layer
+		'''
+		
+		#Convolutional part
+		conv_out = tf.nn.conv2d(X, self.W, strides=[1, 1, 1, 1], padding='SAME')
+		#Add the bias
+		conv_out = tf.nn.bias_add(conv_out, self.b)
+
+		#Sub-sampling (Pooling) part
+		pool_out = tf.nn.max_pool(conv_out, ksize=self.pooling, strides=[1, 2, 2, 1], padding='SAME')
+		
+		#Return the output using the activation function specified
+		return self.f(pool_out)
 ```
 
 ### Fully connected layer class
@@ -42,6 +76,34 @@ class FullyConnectedLayer(object):
 		__init__: Initialize the layer
 		forward: Perform a forward step of the layer
 	'''
+	def __init__(self, M1, M2, activation):
+		'''
+		Initialize the weights and bias of the layer
+		@M1: Number of input nodes.
+		@M2: Number of output nodes.
+		@activation: Activation function for the layer.
+		'''
+
+		#Define tensorflow variables (weight and bias)
+		self.M1 = M1
+		self.M2 = M2
+		W = np.random.randn(M1, M2) * np.sqrt(2.0 / M1)
+		b = np.zeros(M2)
+		self.W = tf.Variable(W.astype(np.float32))
+		self.b = tf.Variable(b.astype(np.float32))
+
+		#Define activation as a property of the element
+		self.f = activation
+
+	def forward(self, X):
+		'''
+		Perform a forward step of the layer
+		@X: Numpy a array the is the input of the layer
+
+		returns the output of the layer
+		'''
+		#Return f((X·W+b))
+		return self.f(tf.matmul(X, self.W) + self.b)
 ```
 
 ### Output layer
@@ -53,6 +115,29 @@ class OutputLayer(object):
 		__init__: Initialize the layer
 		forward: Perform a forward step of the layer
 	'''
+	def __init__(self, M1, M2):
+		'''
+		Initialize the weights and bias of the layer
+		@M1: Number of input nodes.
+		@M2: Number of output classes.
+		'''
+		#Define tensorflow variables (weight and bias)
+		self.M1 = M1
+		self.M2 = M2
+		W = np.random.randn(M1, M2) * np.sqrt(2.0 / M1)
+		b = np.zeros(M2)
+		self.W = tf.Variable(W.astype(np.float32))
+		self.b = tf.Variable(b.astype(np.float32))
+
+	def forward(self, X):
+		'''
+		Perform a forward step of the layer without any activation function
+		@X: Numpy a array the is the input of the layer
+
+		returns the output of the layer
+		'''
+		#Return (X·W+b)
+		return tf.matmul(X, self.W) + self.b
 ```
 
 ### LeNet-5 structure
