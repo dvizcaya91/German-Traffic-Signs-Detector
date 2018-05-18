@@ -1,8 +1,5 @@
-<<<<<<< HEAD
+
 # Kiwi Campus Deep Learning Challenge
-=======
-# Deep Learning Challenge
->>>>>>> 6ba5df3df2646ea7ff5db36be97bcb05fa713aa2
 
 This repository was created by Daniel Vizcaya (dvizcaya91@gmail.com)
 
