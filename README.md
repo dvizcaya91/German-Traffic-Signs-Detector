@@ -5,7 +5,7 @@ This repository was created by Daniel Vizcaya (dvizcaya91@gmail.com)
 
 ## Getting Started
 
-These repository is the solution to the Kiwi Campus Deep Learning Challenge. 
+These repository is the solution to the Kiwi Campus Deep Learning Challenge. Model 3 used *Deep Learning* (Convolutional NN) in order to classify the traffic signs of the dataset. For more information on that model see [/models/model3/README.md](/models/model3/README.md) and [/reports/model2.ipynb](/reports/model2.ipynb) files.
 
 ### Installing required libraries
 
